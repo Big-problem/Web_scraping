@@ -1,31 +1,25 @@
 import requests
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
 if __name__ == '__main__':
     URL = 'http://web.cba.neu.edu/~msolomon/r101.htm'
-    page = requests.get(URL)
+    ua = UserAgent()
+    user = ua.random
+
+    page = requests.get(URL, headers={'user-agent': user})
     print('Done getting')
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    # 可以直接抓tag裡的tag
-    results = soup.select('center b tt font')
+    # 透過tag和css property抓資料
+    results = soup.select('font[color="#3366FF"]')
 
     task = 101
-    index = 103
-    file_path = 'R'+str(task)+'.txt'
+    file_path = 'R'+str(task)+'.txt'  # 設定檔名
+    index = 1
 
-    with open(file_path, 'w') as f:
-        print(task)
-        for result in results[2:index]:
-            tmp = ';'.join(result.text.split())
-            f.write(tmp+'\n')
-        print(tmp)
-
-    task += 1
-    index += 1
-    file_path = 'R'+str(task)+'.txt'
-    for i in range(11):
+    for i in range(12):
         with open(file_path, 'w') as f:
             print(task)
             for result in results[index:index+101]:
@@ -33,7 +27,5 @@ if __name__ == '__main__':
                 f.write(tmp+'\n')
             print(tmp)
         task += 1
-        index += 102
         file_path = 'R'+str(task)+'.txt'
-
-    print('Done')
+        index += 101
